@@ -1,13 +1,13 @@
+mod error;
 mod opts;
 mod parser;
-mod error;
 mod transpiler;
 
 use opts::AppArgs;
 use parser::parse_xml;
 
 use clap::Parser as ClapParser;
-use log::{Level, info, error};
+use log::{Level, error, info};
 use std::fs;
 
 fn main() {
@@ -19,7 +19,7 @@ fn main() {
         if !fs::exists(&file).expect("Could not check file existence") {
             error!("The file '{}' does not exist.", &file);
             return;
-        } 
+        }
 
         let xml_content = fs::read_to_string(&file).expect("Failed to read file");
 
