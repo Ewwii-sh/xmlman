@@ -16,7 +16,7 @@
 
 ### Transpiled Rhai Output
 
-```rust
+```rs
 enter([
     defwindow("Banana", #{}, button(#{ label: "Click me" }))
 ]);
