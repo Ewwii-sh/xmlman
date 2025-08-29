@@ -8,12 +8,13 @@ use checks::run_all_checks;
 use error::print_diag_error;
 use opts::XmlManArgs;
 use parser::parse_xml;
-use transpiler::convert_node;
+use transpiler::{convert_node, convert_tree};
 
 use clap::Parser as ClapParser;
 use colored::Colorize;
 use log::{Level, error, info};
 use std::fs;
+use std::path::{PathBuf, Path};
 
 /// [`FileInfo`] is structure for holding both the
 /// file_path and xml content. It is used to send
@@ -75,6 +76,27 @@ fn main() {
                 if let Err(_) = run_all_checks(&internal_tree) {
                     return;
                 }
+
+                let transpiled_code = match convert_tree(&internal_tree) {
+                    Ok(c) => c,
+                    Err(di) => {
+                        print_diag_error(Some(&file), &xml_content, di);
+                        return;
+                    }
+                };
+
+                let file_name = Path::new(&file).file_stem().unwrap().to_str().unwrap();
+
+                let out_path: PathBuf = if let Some(out_dir) = args.out.as_deref() {
+                    Path::new(out_dir).join(format!("{}.rhai", file_name))
+                } else {
+                    PathBuf::from(format!("{}.rhai", file_name))
+                };
+
+                // writing transpiled code
+                fs::write(&out_path, transpiled_code).expect("Failed to write transpiled file");
+
+                info!("Transpiled '{}' to '{}'", &file_name, &out_path.display())
             }
             Err(_) => return,
         }

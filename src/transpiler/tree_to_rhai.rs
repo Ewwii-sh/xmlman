@@ -1,92 +1,139 @@
-use super::InternalTree;
-use crate::FileInfo;
+use super::{InternalTree, Attr};
+use crate::error::DiagInfo;
 
-pub fn internal_tree_to_rhai(tree: &InternalTree, file_info: &FileInfo) -> String {
+fn format_attrs(attrs: &Vec<Attr>) -> String {
+    let entries: Vec<String> = attrs
+        .iter()
+        .map(|a| format!("\"{}\": `{}`", a.key, a.value))
+        .collect();
+    format!("#{{ {} }}", entries.join(", "))
+}
+
+/// Top-level wrapper that produces a single Rhai script string
+pub fn internal_tree_to_rhai(tree: &InternalTree) -> Result<String, DiagInfo<'_>> {
+    let (rhai_fns, enter_call) = transpile(tree, true)?;
+
+    let mut script_parts = Vec::new();
+    script_parts.extend(rhai_fns);
+    script_parts.push(enter_call);
+
+    Ok(script_parts.join("\n\n"))
+}
+
+/// Recursive transpile function
+fn transpile(tree: &InternalTree, is_root: bool) -> Result<(Vec<String>, String), DiagInfo<'_>> {
     match tree {
-        InternalTree::Label { attrs, span } => {
-            // handle Label
-            format!("Label with attrs: {:?}", attrs)
-        }
-        InternalTree::Box { attrs, children, span } => {
-            // recursively handle children
-            let children_str: Vec<String> =
-                children.iter().map(|c| internal_tree_to_rhai(c, file_info)).collect();
-            format!("Box with attrs: {:?}, children: {:?}", attrs, children_str)
-        }
-        InternalTree::CenterBox { attrs, children, span } => {
-            let children_str: Vec<String> =
-                children.iter().map(|c| internal_tree_to_rhai(c, file_info)).collect();
-            format!("CenterBox with attrs: {:?}, children: {:?}", attrs, children_str)
-        }
-        InternalTree::Button { attrs, span } => format!("Button with attrs: {:?}", attrs),
-        InternalTree::Image { attrs, span } => format!("Image with attrs: {:?}", attrs),
-        InternalTree::Input { attrs, span } => format!("Input with attrs: {:?}", attrs),
-        InternalTree::Progress { attrs, span } => format!("Progress with attrs: {:?}", attrs),
-        InternalTree::ComboBoxText { attrs, span } => {
-            format!("ComboBoxText with attrs: {:?}", attrs)
-        }
-        InternalTree::Slider { attrs, span } => format!("Slider with attrs: {:?}", attrs),
-        InternalTree::Checkbox { attrs, span } => format!("Checkbox with attrs: {:?}", attrs),
-        InternalTree::Expander { attrs, children, span } => {
-            let children_str: Vec<String> =
-                children.iter().map(|c| internal_tree_to_rhai(c, file_info)).collect();
-            format!("Expander with attrs: {:?}, children: {:?}", attrs, children_str)
-        }
-        InternalTree::Revealer { attrs, children, span } => {
-            let children_str: Vec<String> =
-                children.iter().map(|c| internal_tree_to_rhai(c, file_info)).collect();
-            format!("Revealer with attrs: {:?}, children: {:?}", attrs, children_str)
-        }
-        InternalTree::Scroll { attrs, children, span } => {
-            let children_str: Vec<String> =
-                children.iter().map(|c| internal_tree_to_rhai(c, file_info)).collect();
-            format!("Scroll with attrs: {:?}, children: {:?}", attrs, children_str)
-        }
-        InternalTree::OverLay { attrs, children, span } => {
-            let children_str: Vec<String> =
-                children.iter().map(|c| internal_tree_to_rhai(c, file_info)).collect();
-            format!("OverLay with attrs: {:?}, children: {:?}", attrs, children_str)
-        }
-        InternalTree::Stack { attrs, children, span } => {
-            let children_str: Vec<String> =
-                children.iter().map(|c| internal_tree_to_rhai(c, file_info)).collect();
-            format!("Stack with attrs: {:?}, children: {:?}", attrs, children_str)
-        }
-        InternalTree::Calendar { attrs, span } => format!("Calendar with attrs: {:?}", attrs),
-        InternalTree::ColorButton { attrs, span } => format!("ColorButton with attrs: {:?}", attrs),
-        InternalTree::ColorChooser { attrs, span } => {
-            format!("ColorChooser with attrs: {:?}", attrs)
-        }
-        InternalTree::CircularProgress { attrs, span } => {
-            format!("CircularProgress with attrs: {:?}", attrs)
-        }
-        InternalTree::Graph { attrs, span } => format!("Graph with attrs: {:?}", attrs),
-        InternalTree::Transform { attrs, span } => format!("Transform with attrs: {:?}", attrs),
-        InternalTree::EventBox { attrs, children, span } => {
-            let children_str: Vec<String> =
-                children.iter().map(|c| internal_tree_to_rhai(c, file_info)).collect();
-            format!("EventBox with attrs: {:?}, children: {:?}", attrs, children_str)
-        }
-        InternalTree::ToolTip { attrs, children, span } => {
-            let children_str: Vec<String> =
-                children.iter().map(|c| internal_tree_to_rhai(c, file_info)).collect();
-            format!("ToolTip with attrs: {:?}, children: {:?}", attrs, children_str)
+        InternalTree::Enter { children, .. } => {
+            let mut fns = Vec::new();
+            let mut calls = Vec::new();
+
+            for child in children {
+                match child {
+                    InternalTree::Poll { .. } | InternalTree::Listen { .. } | InternalTree::DefWindow { .. } => {
+                        let (mut child_fns, child_call) = transpile(child, true)?;
+                        fns.append(&mut child_fns);
+                        calls.push(child_call);
+                    }
+                    _ => {
+                        // Other nodes inside defwindow children are handled in their own fn
+                    }
+                }
+            }
+
+            let formatted = format!("enter([\n  {}\n])", calls.join(",\n  "));
+            Ok((fns, formatted))
         }
 
-        InternalTree::DefWindow { name, attrs, node, span } => {
-            let node_str = internal_tree_to_rhai(node, file_info);
-            format!("DefWindow '{}' with attrs: {:?}, node: {}", name, attrs, node_str)
+        InternalTree::DefWindow { name, attrs, node, .. } => {
+            let (mut child_fns, child_call) = transpile(node, false)?;
+            let fn_name = format!("{}_child", name);
+            let fn_def = format!("fn {}() {{\n  {}\n}}", fn_name, child_call);
+            child_fns.push(fn_def);
+
+            let call = format!("defwindow(\"{}\", {}, {}())", name, format_attrs(attrs), fn_name);
+            Ok((child_fns, call))
         }
+
         InternalTree::Poll { var, attrs, span } => {
-            format!("Poll '{}' with attrs: {:?}", var, attrs)
+            if is_root {
+                Ok((vec![], format!("poll(\"{}\", {})", var, format_attrs(attrs))))
+            } else {
+                return Err(DiagInfo {
+                    message: "Orphan poll element found deep inside root".to_string(),
+                    label: Some("here"),
+                    note: Some("poll/listen elements should only be defined at the top of <Root>"),
+                    span: span.to_range(),
+                });
+            }
         }
+
         InternalTree::Listen { var, attrs, span } => {
-            format!("Listen '{}' with attrs: {:?}", var, attrs)
+            if is_root {
+                Ok((vec![], format!("listen(\"{}\", {})", var, format_attrs(attrs))))
+            } else {
+                return Err(DiagInfo {
+                    message: "Orphan listen element found deep inside root".to_string(),
+                    label: Some("here"),
+                    note: Some("poll/listen elements should only be defined at the top of <Root>"),
+                    span: span.to_range(),
+                });
+            }
         }
-        InternalTree::Enter { children, span } => {
-            let children_str: Vec<String> =
-                children.iter().map(|c| internal_tree_to_rhai(c, file_info)).collect();
-            format!("Enter with children: {:?}", children_str)
+
+        // Containers with children
+        InternalTree::Box { attrs, children, .. } => {
+            let mut fns = Vec::new();
+            let mut child_calls = Vec::new();
+            for child in children {
+                let (mut cf, cc) = transpile(child, false)?;
+                fns.append(&mut cf);
+                child_calls.push(cc);
+            }
+            Ok((fns, format!("box({}, [{}])", format_attrs(attrs), child_calls.join(",\n  "))))
+        }
+
+        InternalTree::CenterBox { attrs, children, .. } => {
+            let mut fns = Vec::new();
+            let mut child_calls = Vec::new();
+            for child in children {
+                let (mut cf, cc) = transpile(child, false)?;
+                fns.append(&mut cf);
+                child_calls.push(cc);
+            }
+            Ok((fns, format!("centerbox({}, [{}])", format_attrs(attrs), child_calls.join(",\n  "))))
+        }
+
+        // Leaf widgets
+        InternalTree::Button { attrs, .. } => Ok((vec![], format!("button({})", format_attrs(attrs)))),
+        InternalTree::Label { attrs, .. } => Ok((vec![], format!("label({})", format_attrs(attrs)))),
+        InternalTree::Image { attrs, .. } => Ok((vec![], format!("image({})", format_attrs(attrs)))),
+        InternalTree::Input { attrs, .. } => Ok((vec![], format!("input({})", format_attrs(attrs)))),
+        InternalTree::Progress { attrs, .. } => Ok((vec![], format!("progress({})", format_attrs(attrs)))),
+        InternalTree::ComboBoxText { attrs, .. } => Ok((vec![], format!("comboboxtext({})", format_attrs(attrs)))),
+        InternalTree::Slider { attrs, .. } => Ok((vec![], format!("slider({})", format_attrs(attrs)))),
+        InternalTree::Checkbox { attrs, .. } => Ok((vec![], format!("checkbox({})", format_attrs(attrs)))),
+        InternalTree::Calendar { attrs, .. } => Ok((vec![], format!("calendar({})", format_attrs(attrs)))),
+        InternalTree::ColorButton { attrs, .. } => Ok((vec![], format!("colorbutton({})", format_attrs(attrs)))),
+        InternalTree::ColorChooser { attrs, .. } => Ok((vec![], format!("colorchooser({})", format_attrs(attrs)))),
+        InternalTree::CircularProgress { attrs, .. } => Ok((vec![], format!("circularprogress({})", format_attrs(attrs)))),
+        InternalTree::Graph { attrs, .. } => Ok((vec![], format!("graph({})", format_attrs(attrs)))),
+        InternalTree::Transform { attrs, .. } => Ok((vec![], format!("transform({})", format_attrs(attrs)))),
+        InternalTree::Expander { attrs, children, .. }
+        | InternalTree::Revealer { attrs, children, .. }
+        | InternalTree::Scroll { attrs, children, .. }
+        | InternalTree::OverLay { attrs, children, .. }
+        | InternalTree::Stack { attrs, children, .. }
+        | InternalTree::EventBox { attrs, children, .. }
+        | InternalTree::ToolTip { attrs, children, .. } => {
+            let mut fns = Vec::new();
+            let mut child_calls = Vec::new();
+            for child in children {
+                let (mut cf, cc) = transpile(child, false)?;
+                fns.append(&mut cf);
+                child_calls.push(cc);
+            }
+            let name = format!("{:?}", tree).to_lowercase();
+            Ok((fns, format!("{}({}, [{}])", name, format_attrs(attrs), child_calls.join(",\n  "))))
         }
     }
 }

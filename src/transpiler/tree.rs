@@ -1,3 +1,7 @@
+// dead code is enabled because span is not used that much
+// after converting ast to tree. 
+#![allow(dead_code)]
+
 #[derive(Debug, Clone)]
 pub struct Attr {
     pub key: String,
@@ -8,6 +12,17 @@ pub struct Attr {
 pub struct Span {
     pub start: Option<usize>,
     pub end: Option<usize>,
+}
+
+impl Span {
+    /// Convert Span into a Range<usize>
+    /// Returns None if either start or end is None
+    pub fn to_range(&self) -> Option<std::ops::Range<usize>> {
+        match (self.start, self.end) {
+            (Some(start), Some(end)) => Some(start..end),
+            _ => None,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
