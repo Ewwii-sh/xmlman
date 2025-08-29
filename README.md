@@ -10,7 +10,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Window name="Banana">
-    <Button text="Click me"/>
+    <Button label="Click me"/>
 </Window>
 ```
 

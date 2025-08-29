@@ -4,7 +4,7 @@ use clap::Parser;
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 #[command(arg_required_else_help = true)]
-pub struct AppArgs {
+pub struct XmlManArgs {
     /// Files to transpile.
     pub files: Vec<String>,
 

@@ -3,15 +3,25 @@ mod opts;
 mod parser;
 mod transpiler;
 
-use opts::AppArgs;
+use opts::XmlManArgs;
 use parser::parse_xml;
+use transpiler::convert_node;
 
 use clap::Parser as ClapParser;
 use log::{Level, error, info};
 use std::fs;
 
+/// [`FileInfo`] is structure for holding both the
+/// file_path and xml content. It is used to send
+/// info to the transpiler so that it can print pretty
+/// errors whenever it need to.
+pub struct FileInfo<'a> {
+    file_path: &'a str,
+    script: &'a str
+}
+
 fn main() {
-    let args = AppArgs::parse();
+    let args = XmlManArgs::parse();
 
     set_debug_levels(args.debug);
 
@@ -23,9 +33,20 @@ fn main() {
 
         let xml_content = fs::read_to_string(&file).expect("Failed to read file");
 
-        match parse_xml(&xml_content, &file) {
+        let file_info = FileInfo {
+            file_path: &file,
+            script: &xml_content
+        };
+
+        match parse_xml(&file_info) {
             Ok(ast) => {
-                info!("{:#?}", ast);
+                info!("Xml ast: {:#?}", ast);
+
+                // convert to internal tree
+                // the internal tree is a tree that
+                // stands between xml and rhai.
+                let internal_tree = convert_node(&ast, &file_info);
+                info!("Internal AST: {:#?}", internal_tree);
             }
             Err(_) => return,
         }

@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<Window name="Banana">
-</Window>
+<Root>
+    <Window name="Banana">
+        <Box>
+            <Poll name="hello" value="2"/>
+            <Button dyn_id="value" label="Hi"/>
+        </Box>
+    </Window>
+
+    <Random/>
+</Root>
