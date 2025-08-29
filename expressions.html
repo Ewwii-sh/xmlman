@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>XmlMan documentation</title>
-        <meta name="robots" content="noindex">
+        <title>Expressions - XmlMan documentation</title>
 
 
         <!-- Custom HTML head -->
@@ -186,9 +185,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p><strong>XmlMan</strong> is an elegant XML-to-Rhai transpiler for Ewwii, designed to make UI definitions and data structures concise, expressive, and scriptable. It combines the readability of XML with the flexibility of Rhai scripting, giving you precise error reporting without the struggle of Ewwii's Rahi API's.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="expressions"><a class="header" href="#expressions">Expressions</a></h1>
+                        <h1 id="expressions"><a class="header" href="#expressions">Expressions</a></h1>
 <p><strong>XmlMan</strong> supports writing Rhai expressions inside strings. This is both a powerful feature and a potential weakness.</p>
 <h2 id="why-its-a-superpower"><a class="header" href="#why-its-a-superpower">Why it's a superpower</a></h2>
 <p>This feature allows <strong>XmlMan</strong> to be dynamic rather than purely static, giving you more flexibility.</p>
@@ -208,38 +205,18 @@
     &lt;/Window&gt;
 &lt;/Root&gt;
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="errors"><a class="header" href="#errors">Errors</a></h1>
-<p>Errors are one of the main reasons why you should use <strong>XmlMan</strong>. It uses the <a href="https://github.com/zesterer/ariadne/">ariadne crate</a> to output pretty errors that everyone can understand.</p>
-<p><strong>Here is an example error:</strong></p>
-<p><img src="assets/xmlman_error.png" alt="XmlMan Error" /></p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="check-errors-in-xmlman"><a class="header" href="#check-errors-in-xmlman">Check Errors in XmlMan</a></h1>
-<p>XmlMan performs several validation checks before compiling XML to Rhai.
-If a check fails, you will receive a <strong>check error</strong> that helps identify the issue.</p>
-<h2 id="what-a-check-error-looks-like"><a class="header" href="#what-a-check-error-looks-like">What a Check Error Looks Like</a></h2>
-<p>A check error typically contains:</p>
-<ol>
-<li><strong>Error level</strong>: e.g., <code>[ERROR]</code></li>
-<li><strong>Check error ID</strong>: e.g., <code>[CE01]</code></li>
-<li><strong>Message</strong>: describes what went wrong</li>
-</ol>
-<h3 id="example"><a class="header" href="#example">Example</a></h3>
-<pre><code class="language-log">[ERROR] [CE01] Enter not found in internal tree. A &lt;Root&gt; should exist in the xml markup.
-</code></pre>
-<p>Here’s what this means:</p>
-<ul>
-<li><code>[ERROR]</code>: Severity level</li>
-<li><code>[CE01]</code>: Check error ID, which you can reference in the documentation</li>
-<li>Message: Explains the missing <code>&lt;Root&gt;</code> element</li>
-</ul>
-<h2 id="all-check-errors"><a class="header" href="#all-check-errors">All check errors</a></h2>
-<p>Are you curious to learn about all check errors in <strong>XmlMan</strong>, or just want to look up a check error?</p>
-<p>Checkout the <a href="https://github.com/ewwii-sh/xmlman/blob/main/logs/CHECK_ERRORS.md">check error list</a>.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="introduction.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
+                            <a rel="next prefetch" href="errors.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -247,7 +224,13 @@ If a check fails, you will receive a <strong>check error</strong> that helps ide
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="introduction.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
+                    <a rel="next prefetch" href="errors.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>
@@ -271,11 +254,6 @@ If a check fails, you will receive a <strong>check error</strong> that helps ide
         <!-- Custom JS scripts -->
         <script src="js/home_button.js"></script>
 
-        <script>
-        window.addEventListener('load', function() {
-            window.setTimeout(window.print, 100);
-        });
-        </script>
 
 
     </div>
