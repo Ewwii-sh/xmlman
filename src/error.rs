@@ -4,7 +4,7 @@ use ariadne::{Color, ColorGenerator, Fmt, Label, Report, ReportKind, Source};
 use std::ops::Range;
 
 /// [`DiagInfo`] struct is used to hold the contents used
-/// to generate an pretty diagnostic error with ariadne. 
+/// to generate an pretty diagnostic error with ariadne.
 pub struct DiagInfo<'a> {
     pub message: String,
     pub label: Option<&'a str>,

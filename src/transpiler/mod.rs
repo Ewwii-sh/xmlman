@@ -1,5 +1,5 @@
-mod tree;
 mod ast_to_tree;
+mod tree;
 mod tree_to_rhai;
 
 // Reexports

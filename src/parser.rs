@@ -3,12 +3,12 @@
 //! _xmlparser's_ role in parsing is validating the script,
 //! finding errors, generating spans etc.
 //! And _xml-rs's_ role is generating the AST (Abstract Syntax Tree).
-//! 
+//!
 //! Combining both of them gives xmlman the best of both worlds.
 //! Good errors throught spans (start..end) and fast AST parsing.
 
-use crate::error::{DiagInfo, print_diag_error};
 use super::FileInfo;
+use crate::error::{DiagInfo, print_diag_error};
 use std::cell::RefCell;
 use std::error::Error;
 use std::rc::Rc;
@@ -26,9 +26,7 @@ pub struct Node<'a> {
     pub span: Option<StrSpan<'a>>,
 }
 
-pub fn parse_xml<'a>(
-    file_info: &FileInfo<'a>
-) -> Result<Rc<RefCell<Node<'a>>>, Box<dyn Error>> {
+pub fn parse_xml<'a>(file_info: &FileInfo<'a>) -> Result<Rc<RefCell<Node<'a>>>, Box<dyn Error>> {
     // First pass: xmlparser to gather spans and detect errors
     let mut token_spans = Vec::new();
     let tokenizer = Tokenizer::from(file_info.script);
@@ -76,7 +74,7 @@ pub fn parse_xml<'a>(
                     },
                 );
 
-                return Err(Box::new(e))
+                return Err(Box::new(e));
             }
         }
     }
@@ -127,12 +125,7 @@ pub fn parse_xml<'a>(
                 print_diag_error(
                     Some(file_info.file_path),
                     file_info.script,
-                    DiagInfo {
-                        message: e.to_string(),
-                        label: None,
-                        note: None,
-                        span: None,
-                    },
+                    DiagInfo { message: e.to_string(), label: None, note: None, span: None },
                 );
                 return Err(Box::new(e));
             }

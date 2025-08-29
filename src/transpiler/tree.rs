@@ -5,38 +5,41 @@ pub struct Attr {
 }
 
 #[derive(Debug, Clone)]
+pub struct Span {
+    pub start: Option<usize>,
+    pub end: Option<usize>,
+}
+
+#[derive(Debug, Clone)]
 pub enum InternalTree {
     // === Widgets === //
-    Label { attrs: Vec<Attr> },
-    Box { attrs: Vec<Attr>, children: Vec<InternalTree> },
-    CenterBox { attrs: Vec<Attr>, children: Vec<InternalTree> },
-    Button { attrs: Vec<Attr> },
-    Image { attrs: Vec<Attr> },
-    Input { attrs: Vec<Attr> },
-    Progress { attrs: Vec<Attr> },
-    ComboBoxText { attrs: Vec<Attr> },
-    Slider { attrs: Vec<Attr> },
-    Checkbox { attrs: Vec<Attr> },
-    Expander { attrs: Vec<Attr>, children: Vec<InternalTree> },
-    Revealer { attrs: Vec<Attr>, children: Vec<InternalTree> },
-    Scroll { attrs: Vec<Attr>, children: Vec<InternalTree> },
-    OverLay { attrs: Vec<Attr>, children: Vec<InternalTree> },
-    Stack { attrs: Vec<Attr>, children: Vec<InternalTree> },
-    Calendar { attrs: Vec<Attr> },
-    ColorButton { attrs: Vec<Attr> },
-    ColorChooser { attrs: Vec<Attr> },
-    CircularProgress { attrs: Vec<Attr> },
-    Graph { attrs: Vec<Attr> },
-    Transform { attrs: Vec<Attr> },
-    EventBox { attrs: Vec<Attr>, children: Vec<InternalTree> },
-    ToolTip { attrs: Vec<Attr>, children: Vec<InternalTree> },
+    Label { attrs: Vec<Attr>, span: Span },
+    Box { attrs: Vec<Attr>, children: Vec<InternalTree>, span: Span },
+    CenterBox { attrs: Vec<Attr>, children: Vec<InternalTree>, span: Span },
+    Button { attrs: Vec<Attr>, span: Span },
+    Image { attrs: Vec<Attr>, span: Span },
+    Input { attrs: Vec<Attr>, span: Span },
+    Progress { attrs: Vec<Attr>, span: Span },
+    ComboBoxText { attrs: Vec<Attr>, span: Span },
+    Slider { attrs: Vec<Attr>, span: Span },
+    Checkbox { attrs: Vec<Attr>, span: Span },
+    Expander { attrs: Vec<Attr>, children: Vec<InternalTree>, span: Span },
+    Revealer { attrs: Vec<Attr>, children: Vec<InternalTree>, span: Span },
+    Scroll { attrs: Vec<Attr>, children: Vec<InternalTree>, span: Span },
+    OverLay { attrs: Vec<Attr>, children: Vec<InternalTree>, span: Span },
+    Stack { attrs: Vec<Attr>, children: Vec<InternalTree>, span: Span },
+    Calendar { attrs: Vec<Attr>, span: Span },
+    ColorButton { attrs: Vec<Attr>, span: Span },
+    ColorChooser { attrs: Vec<Attr>, span: Span },
+    CircularProgress { attrs: Vec<Attr>, span: Span },
+    Graph { attrs: Vec<Attr>, span: Span },
+    Transform { attrs: Vec<Attr>, span: Span },
+    EventBox { attrs: Vec<Attr>, children: Vec<InternalTree>, span: Span },
+    ToolTip { attrs: Vec<Attr>, children: Vec<InternalTree>, span: Span },
 
     // === Top-level macros === //
-    DefWindow { name: String, attrs: Vec<Attr>, node: Box<InternalTree> },
-    Poll { var: String, attrs: Vec<Attr> },
-    Listen { var: String, attrs: Vec<Attr> },
-    Enter(Vec<InternalTree>),
-
-    // === Special === //
-    Unknown
+    DefWindow { name: String, attrs: Vec<Attr>, node: Box<InternalTree>, span: Span },
+    Poll { var: String, attrs: Vec<Attr>, span: Span },
+    Listen { var: String, attrs: Vec<Attr>, span: Span },
+    Enter { children: Vec<InternalTree>, span: Span },
 }

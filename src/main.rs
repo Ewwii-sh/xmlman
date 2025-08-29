@@ -1,15 +1,17 @@
+mod checks;
 mod error;
 mod opts;
 mod parser;
 mod transpiler;
-mod checks;
 
+use checks::run_all_checks;
+use error::print_diag_error;
 use opts::XmlManArgs;
 use parser::parse_xml;
 use transpiler::convert_node;
-use checks::run_all_checks;
 
 use clap::Parser as ClapParser;
+use colored::Colorize;
 use log::{Level, error, info};
 use std::fs;
 
@@ -19,7 +21,7 @@ use std::fs;
 /// errors whenever it need to.
 pub struct FileInfo<'a> {
     file_path: &'a str,
-    script: &'a str
+    script: &'a str,
 }
 
 fn main() {
@@ -50,10 +52,7 @@ fn main() {
 
         let xml_content = fs::read_to_string(&file).expect("Failed to read file");
 
-        let file_info = FileInfo {
-            file_path: &file,
-            script: &xml_content
-        };
+        let file_info = FileInfo { file_path: &file, script: &xml_content };
 
         match parse_xml(&file_info) {
             Ok(ast) => {
@@ -62,7 +61,14 @@ fn main() {
                 // convert to internal tree
                 // the internal tree is a tree that
                 // stands between xml and rhai.
-                let internal_tree = convert_node(&ast, &file_info);
+                let internal_tree = match convert_node(ast, &file_info) {
+                    Ok(t) => t,
+                    Err(di) => {
+                        print_diag_error(Some(&file), &xml_content, di);
+                        return;
+                    }
+                };
+
                 info!("Internal AST: {:#?}", internal_tree);
 
                 // If any check failed, return;
@@ -90,8 +96,8 @@ fn set_debug_levels(debug_mode: bool) {
                 use std::io::Write;
 
                 match record.level() {
-                    Level::Warn => writeln!(buf, "[WARN] {}", record.args()),
-                    Level::Error => writeln!(buf, "[ERROR] {}", record.args()),
+                    Level::Warn => writeln!(buf, "{} {}", "[WARN]".yellow(), record.args()),
+                    Level::Error => writeln!(buf, "{} {}", "[ERROR]".red(), record.args()),
                     _ => writeln!(buf, "{}", record.args()),
                 }
             })
