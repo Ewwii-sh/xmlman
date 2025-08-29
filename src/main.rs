@@ -25,6 +25,21 @@ fn main() {
 
     set_debug_levels(args.debug);
 
+    // This is where we start transpiling to rhai.
+    // Full transpile process:
+    //
+    // -----------      ---------------------------------
+    // | Read fs | ---> | Parse with xml-rs & xmlparser | ---->
+    // -----------      ---------------------------------     |
+    //                              ---------------------------------------------------
+    //              <-------------- | Convert XML AST to internal tree representation |
+    //              |               ---------------------------------------------------
+    //              |                                                 |
+    //     ----------------------------------------                   |
+    //     | Internal tree then converted to Rhai |    ----------------------------------
+    //     ----------------------------------------    | Run checks to prevent mistakes |
+    //                                                 ----------------------------------
+    //
     for file in args.files {
         if !fs::exists(&file).expect("Could not check file existence") {
             error!("The file '{}' does not exist.", &file);

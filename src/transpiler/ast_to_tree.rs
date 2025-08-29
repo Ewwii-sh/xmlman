@@ -1,4 +1,3 @@
-
 use crate::parser::Node;
 use std::cell::RefCell;
 use super::tree::{Attr, InternalTree};
