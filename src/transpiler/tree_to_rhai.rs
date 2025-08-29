@@ -1,5 +1,5 @@
 use crate::FileInfo;
-use log::error;
+use super::InternalTree;
 
 pub fn internal_tree_to_rhai(tree: &InternalTree, file_info: &FileInfo) -> String {
     match tree {
@@ -99,8 +99,7 @@ pub fn internal_tree_to_rhai(tree: &InternalTree, file_info: &FileInfo) -> Strin
             format!("Enter with children: {:?}", children_str)
         }
         InternalTree::Unknown => {
-            error!("Unknown node in file {:?}", file_info);
-            "Unknown".to_string()
+            String::new()
         }
     }
 }

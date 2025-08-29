@@ -2,10 +2,12 @@ mod error;
 mod opts;
 mod parser;
 mod transpiler;
+mod checks;
 
 use opts::XmlManArgs;
 use parser::parse_xml;
 use transpiler::convert_node;
+use checks::run_all_checks;
 
 use clap::Parser as ClapParser;
 use log::{Level, error, info};
@@ -62,6 +64,11 @@ fn main() {
                 // stands between xml and rhai.
                 let internal_tree = convert_node(&ast, &file_info);
                 info!("Internal AST: {:#?}", internal_tree);
+
+                // If any check failed, return;
+                if let Err(_) = run_all_checks(&internal_tree) {
+                    return;
+                }
             }
             Err(_) => return,
         }
