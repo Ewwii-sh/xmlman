@@ -11,6 +11,6 @@ clap = { version = "4.5.46", features = ["derive"] }
 colored = "3.0.0"
 env_logger = "0.11.8"
 log = "0.4.27"
-rhai = "1.22.2"
-xml-rs = "1.0.0"
+rhai = { version = "1.22.2", features = ["internals"] }
+xml = "1.0.0"
 xmlparser = "0.13.6"

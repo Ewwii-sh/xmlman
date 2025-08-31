@@ -1,11 +1,13 @@
 mod checks;
 mod error;
+mod formatter;
 mod opts;
 mod parser;
 mod transpiler;
 
 use checks::run_all_checks;
 use error::print_diag_error;
+use formatter::format_rhai_code;
 use opts::XmlManArgs;
 use parser::parse_xml;
 use transpiler::{convert_node, convert_tree};
@@ -14,7 +16,7 @@ use clap::Parser as ClapParser;
 use colored::Colorize;
 use log::{Level, error, info};
 use std::fs;
-use std::path::{PathBuf, Path};
+use std::path::{Path, PathBuf};
 
 /// [`FileInfo`] is structure for holding both the
 /// file_path and xml content. It is used to send
@@ -37,13 +39,20 @@ fn main() {
     // | Read fs | ---> | Parse with xml-rs & xmlparser | ---->
     // -----------      ---------------------------------     |
     //                              ---------------------------------------------------
-    //              <-------------- | Convert XML AST to internal tree representation |
-    //              |               ---------------------------------------------------
-    //              |                                                 |
+    //              --------------- | Convert XML AST to internal tree representation |
+    //              | [2nd]         ---------------------------------------------------
+    //              |                                                 | [1st]
     //     ----------------------------------------                   |
     //     | Internal tree then converted to Rhai |    ----------------------------------
     //     ----------------------------------------    | Run checks to prevent mistakes |
-    //                                                 ----------------------------------
+    //              |                                  ----------------------------------
+    //     ------------------------
+    //     | Optionally formatted |
+    //     ------------------------
+    //              |
+    //              |      ---------------
+    //              | ---> | Write to fs |
+    //                     ---------------
     //
     for file in args.files {
         if !fs::exists(&file).expect("Could not check file existence") {
@@ -57,8 +66,6 @@ fn main() {
 
         match parse_xml(&file_info) {
             Ok(ast) => {
-                info!("Xml ast: {:#?}", ast);
-
                 // convert to internal tree
                 // the internal tree is a tree that
                 // stands between xml and rhai.
@@ -69,8 +76,6 @@ fn main() {
                         return;
                     }
                 };
-
-                info!("Internal AST: {:#?}", internal_tree);
 
                 // If any check failed, return;
                 if let Err(_) = run_all_checks(&internal_tree) {
@@ -93,10 +98,23 @@ fn main() {
                     PathBuf::from(format!("{}.rhai", file_name))
                 };
 
-                // writing transpiled code
-                fs::write(&out_path, transpiled_code).expect("Failed to write transpiled file");
+                let final_code = if args.format {
+                    match format_rhai_code(&transpiled_code) {
+                        Ok(fc) => fc,
+                        Err(e) => {
+                            error!("Failed to format code: {}", e);
+                            info!("{}", "Skipping fomrating...");
+                            transpiled_code
+                        }
+                    }
+                } else {
+                    transpiled_code
+                };
 
-                info!("Transpiled '{}' to '{}'", &file_name, &out_path.display())
+                // writing transpiled code
+                fs::write(&out_path, final_code).expect("Failed to write transpiled file");
+
+                info!("[-] Transpiled '{}' to '{}'", &file_name, &out_path.display())
             }
             Err(_) => return,
         }

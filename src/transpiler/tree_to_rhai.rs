@@ -1,11 +1,29 @@
-use super::{InternalTree, Attr};
+use super::{Attr, InternalTree};
 use crate::error::DiagInfo;
 
 fn format_attrs(attrs: &Vec<Attr>) -> String {
-    let entries: Vec<String> = attrs
-        .iter()
-        .map(|a| format!("\"{}\": `{}`", a.key, a.value))
-        .collect();
+    let entries: Vec<String> =
+        attrs.iter().map(|a| format!("\"{}\": `{}`", a.key, a.value)).collect();
+    format!("#{{ {} }}", entries.join(", "))
+}
+
+/// Special case attribute parser for `defwidget`.
+///
+/// A special case parser is needed because in Rhai, we can use
+/// a `Map` on certain properties like `geometry` and `reserve`
+/// which xml lacks due to its flat atribute style.
+fn defwidget_attrs_parser(attrs: &Vec<Attr>) -> String {
+    let entries: Vec<String> =
+        attrs.iter().map(|a| format!("\"{}\": `{}`", a.key, a.value)).collect();
+
+    for entry in &entries {
+        let name_attr = attrs
+            .iter()
+            .find(|a| a.key == "name")
+            .map(|a| a.value.clone())
+            .unwrap_or_else(|| "Unnamed".to_string());
+    }
+
     format!("#{{ {} }}", entries.join(", "))
 }
 
@@ -29,7 +47,9 @@ fn transpile(tree: &InternalTree, is_root: bool) -> Result<(Vec<String>, String)
 
             for child in children {
                 match child {
-                    InternalTree::Poll { .. } | InternalTree::Listen { .. } | InternalTree::DefWindow { .. } => {
+                    InternalTree::Poll { .. }
+                    | InternalTree::Listen { .. }
+                    | InternalTree::DefWindow { .. } => {
                         let (mut child_fns, child_call) = transpile(child, true)?;
                         fns.append(&mut child_fns);
                         calls.push(child_call);
@@ -50,7 +70,12 @@ fn transpile(tree: &InternalTree, is_root: bool) -> Result<(Vec<String>, String)
             let fn_def = format!("fn {}() {{\n  {}\n}}", fn_name, child_call);
             child_fns.push(fn_def);
 
-            let call = format!("defwindow(\"{}\", {}, {}())", name, format_attrs(attrs), fn_name);
+            let call = format!(
+                "defwindow(\"{}\", {}, {}())",
+                name,
+                defwidget_attrs_parser(attrs),
+                fn_name
+            );
             Ok((child_fns, call))
         }
 
@@ -100,24 +125,55 @@ fn transpile(tree: &InternalTree, is_root: bool) -> Result<(Vec<String>, String)
                 fns.append(&mut cf);
                 child_calls.push(cc);
             }
-            Ok((fns, format!("centerbox({}, [{}])", format_attrs(attrs), child_calls.join(",\n  "))))
+            Ok((
+                fns,
+                format!("centerbox({}, [{}])", format_attrs(attrs), child_calls.join(",\n  ")),
+            ))
         }
 
         // Leaf widgets
-        InternalTree::Button { attrs, .. } => Ok((vec![], format!("button({})", format_attrs(attrs)))),
-        InternalTree::Label { attrs, .. } => Ok((vec![], format!("label({})", format_attrs(attrs)))),
-        InternalTree::Image { attrs, .. } => Ok((vec![], format!("image({})", format_attrs(attrs)))),
-        InternalTree::Input { attrs, .. } => Ok((vec![], format!("input({})", format_attrs(attrs)))),
-        InternalTree::Progress { attrs, .. } => Ok((vec![], format!("progress({})", format_attrs(attrs)))),
-        InternalTree::ComboBoxText { attrs, .. } => Ok((vec![], format!("comboboxtext({})", format_attrs(attrs)))),
-        InternalTree::Slider { attrs, .. } => Ok((vec![], format!("slider({})", format_attrs(attrs)))),
-        InternalTree::Checkbox { attrs, .. } => Ok((vec![], format!("checkbox({})", format_attrs(attrs)))),
-        InternalTree::Calendar { attrs, .. } => Ok((vec![], format!("calendar({})", format_attrs(attrs)))),
-        InternalTree::ColorButton { attrs, .. } => Ok((vec![], format!("colorbutton({})", format_attrs(attrs)))),
-        InternalTree::ColorChooser { attrs, .. } => Ok((vec![], format!("colorchooser({})", format_attrs(attrs)))),
-        InternalTree::CircularProgress { attrs, .. } => Ok((vec![], format!("circularprogress({})", format_attrs(attrs)))),
-        InternalTree::Graph { attrs, .. } => Ok((vec![], format!("graph({})", format_attrs(attrs)))),
-        InternalTree::Transform { attrs, .. } => Ok((vec![], format!("transform({})", format_attrs(attrs)))),
+        InternalTree::Button { attrs, .. } => {
+            Ok((vec![], format!("button({})", format_attrs(attrs))))
+        }
+        InternalTree::Label { attrs, .. } => {
+            Ok((vec![], format!("label({})", format_attrs(attrs))))
+        }
+        InternalTree::Image { attrs, .. } => {
+            Ok((vec![], format!("image({})", format_attrs(attrs))))
+        }
+        InternalTree::Input { attrs, .. } => {
+            Ok((vec![], format!("input({})", format_attrs(attrs))))
+        }
+        InternalTree::Progress { attrs, .. } => {
+            Ok((vec![], format!("progress({})", format_attrs(attrs))))
+        }
+        InternalTree::ComboBoxText { attrs, .. } => {
+            Ok((vec![], format!("comboboxtext({})", format_attrs(attrs))))
+        }
+        InternalTree::Slider { attrs, .. } => {
+            Ok((vec![], format!("slider({})", format_attrs(attrs))))
+        }
+        InternalTree::Checkbox { attrs, .. } => {
+            Ok((vec![], format!("checkbox({})", format_attrs(attrs))))
+        }
+        InternalTree::Calendar { attrs, .. } => {
+            Ok((vec![], format!("calendar({})", format_attrs(attrs))))
+        }
+        InternalTree::ColorButton { attrs, .. } => {
+            Ok((vec![], format!("colorbutton({})", format_attrs(attrs))))
+        }
+        InternalTree::ColorChooser { attrs, .. } => {
+            Ok((vec![], format!("colorchooser({})", format_attrs(attrs))))
+        }
+        InternalTree::CircularProgress { attrs, .. } => {
+            Ok((vec![], format!("circularprogress({})", format_attrs(attrs))))
+        }
+        InternalTree::Graph { attrs, .. } => {
+            Ok((vec![], format!("graph({})", format_attrs(attrs))))
+        }
+        InternalTree::Transform { attrs, .. } => {
+            Ok((vec![], format!("transform({})", format_attrs(attrs))))
+        }
         InternalTree::Expander { attrs, children, .. }
         | InternalTree::Revealer { attrs, children, .. }
         | InternalTree::Scroll { attrs, children, .. }

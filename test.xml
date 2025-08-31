@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Root>
-    <Window name="Banana">
+    <Window name="Banana" test="a">
         <Box>
             <!-- The expression inside ${} is a Rhai expression -->
             <Label text="${2 + 2}"/>

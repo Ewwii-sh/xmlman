@@ -22,7 +22,7 @@ pub fn run_all_checks(tree: &InternalTree) -> Result<(), ()> {
 
     if checks_failed > 0 {
         if checks_failed == 1 {
-            error!("{} check failed. Exiting.", checks_failed);
+            error!("1 check failed. Exiting.");
         } else {
             error!("{} checks failed. Exiting.", checks_failed);
         }

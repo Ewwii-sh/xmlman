@@ -1,5 +1,5 @@
 // dead code is enabled because span is not used that much
-// after converting ast to tree. 
+// after converting ast to tree.
 #![allow(dead_code)]
 
 #[derive(Debug, Clone)]
@@ -15,7 +15,7 @@ pub struct Span {
 }
 
 impl Span {
-    /// Convert Span into a Range<usize>
+    /// Convert Span into a `Range<usize>`
     /// Returns None if either start or end is None
     pub fn to_range(&self) -> Option<std::ops::Range<usize>> {
         match (self.start, self.end) {

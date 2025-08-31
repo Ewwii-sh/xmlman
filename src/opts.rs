@@ -12,6 +12,10 @@ pub struct XmlManArgs {
     #[clap(short, long)]
     pub out: Option<String>,
 
+    /// Output pretty and formatted Rhai code.
+    #[clap(short, long)]
+    pub format: bool,
+
     /// Show debug logs.
     #[arg(long)]
     pub debug: bool,

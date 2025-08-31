@@ -12,7 +12,7 @@ pub fn node_to_internal_tree<'a>(
     let node = node_ref.borrow();
 
     // Convert attributes
-    let attrs: Vec<Attr> =
+    let mut attrs: Vec<Attr> =
         node.attributes.iter().map(|(k, v)| Attr { key: k.clone(), value: v.clone() }).collect();
 
     // Recursively convert children
@@ -54,11 +54,19 @@ pub fn node_to_internal_tree<'a>(
         "EventBox" => Ok(InternalTree::EventBox { attrs, children, span }),
         "ToolTip" => Ok(InternalTree::ToolTip { attrs, children, span }),
         "Window" => {
-            let name_attr = attrs
-                .iter()
-                .find(|a| a.key == "name")
-                .map(|a| a.value.clone())
-                .unwrap_or_else(|| "Unnamed".to_string());
+            let name_attr = match attrs.iter().find(|a| a.key == "name").map(|a| a.value.clone()) {
+                Some(a) => a,
+                None => {
+                    return Err(DiagInfo {
+                        message: format!("A window without a name was found!"),
+                        label: Some("Add a name attribute in this element."),
+                        note: None,
+                        span: node.span.as_ref().map(|s| s.range()),
+                    });
+                }
+            };
+
+            attrs.retain(|a| a.key != "name");
 
             let node = if children.len() == 1 {
                 Box::new(children.into_iter().next().unwrap())
@@ -71,7 +79,7 @@ pub fn node_to_internal_tree<'a>(
                 });
             };
 
-            Ok(InternalTree::DefWindow { name: name_attr, attrs: vec![], node, span })
+            Ok(InternalTree::DefWindow { name: name_attr, attrs, node, span })
         }
         "Poll" => {
             let var_name =
