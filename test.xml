@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Root>
-    <Window name="Banana" test="a">
+    <Window name="Banana" geometry.width="100%" geometry.height="10px">
         <Box>
             <!-- The expression inside ${} is a Rhai expression -->
-            <Label text="${2 + 2}"/>
+            <Label text="${2 + 2}" visible="${1 == 2}"/>
+            <Label text="Hidden text" visible="${1 == 1}"/>
         </Box>
     </Window>
 </Root>

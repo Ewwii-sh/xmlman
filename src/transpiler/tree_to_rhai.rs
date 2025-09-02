@@ -1,5 +1,6 @@
 use super::{Attr, InternalTree};
 use crate::error::DiagInfo;
+use std::collections::BTreeMap;
 
 /// Format attributes into a Rhai-compatible map with pretty indentation
 fn format_attrs(attrs: &Vec<Attr>, indent: usize) -> String {
@@ -27,12 +28,52 @@ fn format_attrs(attrs: &Vec<Attr>, indent: usize) -> String {
 
 /// Special-case attribute parser for `defwindow`
 fn defwidget_attrs_parser(attrs: &Vec<Attr>) -> String {
-    let entries: Vec<String> = attrs
-        .iter()
-        .map(|a| format!("\"{}\": `{}`", a.key, a.value))
-        .collect();
+    let mut flat_entries: Vec<String> = Vec::new();
 
-    format!("#{{ {} }}", entries.join(", "))
+    let mut geometry_map: BTreeMap<String, String> = BTreeMap::new();
+    let mut reserve_map: BTreeMap<String, String> = BTreeMap::new();
+
+    for a in attrs {
+        if let Some(stripped) = a.key.strip_prefix("geometry.") {
+            match stripped {
+                "x" | "y" | "anchor" | "width" | "height" => {
+                    geometry_map.insert(stripped.to_string(), a.value.clone());
+                    continue;
+                }
+                _ => {}
+            }
+        }
+
+        if let Some(stripped) = a.key.strip_prefix("reserve.") {
+            match stripped {
+                "side" | "distance" => {
+                    reserve_map.insert(stripped.to_string(), a.value.clone());
+                    continue;
+                }
+                _ => {}
+            }
+        }
+
+        flat_entries.push(format!("\"{}\": `{}`", a.key, a.value));
+    }
+
+    if !geometry_map.is_empty() {
+        let geom_entries: Vec<String> = geometry_map
+            .into_iter()
+            .map(|(k, v)| format!("\"{}\": `{}`", k, v))
+            .collect();
+        flat_entries.push(format!("\"geometry\": #{{ {} }}", geom_entries.join(", ")));
+    }
+
+    if !reserve_map.is_empty() {
+        let reserve_entries: Vec<String> = reserve_map
+            .into_iter()
+            .map(|(k, v)| format!("\"{}\": `{}`", k, v))
+            .collect();
+        flat_entries.push(format!("\"reserve\": #{{ {} }}", reserve_entries.join(", ")));
+    }
+
+    format!("#{{ {} }}", flat_entries.join(", "))
 }
 
 /// Top-level wrapper that produces a single Rhai script string
