@@ -1,13 +1,11 @@
 mod checks;
 mod error;
-mod formatter;
 mod opts;
 mod parser;
 mod transpiler;
 
 use checks::run_all_checks;
 use error::print_diag_error;
-use formatter::format_rhai_code;
 use opts::XmlManArgs;
 use parser::parse_xml;
 use transpiler::{convert_node, convert_tree};
@@ -98,21 +96,8 @@ fn main() {
                     PathBuf::from(format!("{}.rhai", file_name))
                 };
 
-                let final_code = if args.format {
-                    match format_rhai_code(&transpiled_code) {
-                        Ok(fc) => fc,
-                        Err(e) => {
-                            error!("Failed to format code: {}", e);
-                            info!("{}", "Skipping fomrating...");
-                            transpiled_code
-                        }
-                    }
-                } else {
-                    transpiled_code
-                };
-
                 // writing transpiled code
-                fs::write(&out_path, final_code).expect("Failed to write transpiled file");
+                fs::write(&out_path, transpiled_code).expect("Failed to write transpiled file");
 
                 info!("[-] Transpiled '{}' to '{}'", &file_name, &out_path.display())
             }
