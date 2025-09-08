@@ -189,6 +189,8 @@
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
 <p><strong>XmlMan</strong> is an elegant XML-to-Rhai transpiler for Ewwii, designed to make UI definitions and data structures concise, expressive, and scriptable. It combines the readability of XML with the flexibility of Rhai scripting, giving you precise error reporting without the struggle of Ewwii's Rahi API's.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="expressions"><a class="header" href="#expressions">Expressions</a></h1>
+<p>Expressions are one of the most important concepts in xmlman which makes it more flexible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="expressions-1"><a class="header" href="#expressions-1">Expressions</a></h1>
 <p><strong>XmlMan</strong> supports writing Rhai expressions inside strings. This is both a powerful feature and a potential weakness.</p>
 <h2 id="why-its-a-superpower"><a class="header" href="#why-its-a-superpower">Why it's a superpower</a></h2>
 <p>This feature allows <strong>XmlMan</strong> to be dynamic rather than purely static, giving you more flexibility.</p>
@@ -208,6 +210,41 @@
     &lt;/Window&gt;
 &lt;/Root&gt;
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="special-expression-no_quote"><a class="header" href="#special-expression-no_quote">Special Expression: <code>@no_quote</code></a></h1>
+<p><code>XmlMan</code> provides a special expression called <code>@no_quote</code> that allows you to assign <strong>non-string values</strong> (like booleans, integers, or other raw data) to element attributes. Normally, attribute values are wrapped in quotes and interpreted as strings. Using <code>@no_quote</code> tells the transpiler <strong>not</strong> to quote the value.</p>
+<h3 id="how-it-works"><a class="header" href="#how-it-works">How It Works</a></h3>
+<p>In <code>XmlMan</code>, XML attributes are normally <strong>always quoted</strong>, which means values are treated as strings. Sometimes, you want to assign <strong>raw values</strong>—like booleans or numbers—without quotes. The <code>@no_quote</code> expression makes this possible.</p>
+<h4 id="xml-example"><a class="header" href="#xml-example">XML Example</a></h4>
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;Root&gt;
+    &lt;Window name="Banana"&gt;
+        &lt;Box&gt;
+            &lt;!-- @no_quote(false) ensures this is a boolean, not a string --&gt;
+            &lt;Label text="foo" visible="@no_quote(false)"/&gt;
+        &lt;/Box&gt;
+    &lt;/Window&gt;
+&lt;/Root&gt;
+</code></pre>
+<p>Here, <code>visible="@no_quote(false)"</code> assigns a <strong>boolean <code>false</code></strong> instead of the string <code>`false`</code>.</p>
+<h4 id="transpiled-rhai-code"><a class="header" href="#transpiled-rhai-code">Transpiled Rhai Code</a></h4>
+<p>When the above XML is transpiled, it produces the following Rhai code:</p>
+<pre><code class="language-js">fn Banana_child() {
+    box(#{}, [
+      label(#{
+        "text": `foo`, // string
+        "visible": false // boolean
+      })
+    ])
+}
+
+enter([
+    defwindow("Banana", #{  }, Banana_child())
+])
+</code></pre>
+<blockquote>
+<p><strong>Important:</strong> If you write <code>@no_quote(val) some_other_val</code>, the engine will <strong>still</strong> wrap the entire value in quotes. Only the direct use of <code>@no_quote(val)</code> ensures the value remains unquoted.</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="errors"><a class="header" href="#errors">Errors</a></h1>
 <p>Errors are one of the main reasons why you should use <strong>XmlMan</strong>. It uses the <a href="https://github.com/zesterer/ariadne/">ariadne crate</a> to output pretty errors that everyone can understand.</p>
 <p><strong>Here is an example error:</strong></p>

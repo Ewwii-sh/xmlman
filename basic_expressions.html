@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Expressions - XmlMan documentation</title>
+        <title>Basic Expressions - XmlMan documentation</title>
 
 
         <!-- Custom HTML head -->
@@ -186,17 +186,35 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="expressions"><a class="header" href="#expressions">Expressions</a></h1>
-<p>Expressions are one of the most important concepts in xmlman which makes it more flexible.</p>
+<p><strong>XmlMan</strong> supports writing Rhai expressions inside strings. This is both a powerful feature and a potential weakness.</p>
+<h2 id="why-its-a-superpower"><a class="header" href="#why-its-a-superpower">Why it's a superpower</a></h2>
+<p>This feature allows <strong>XmlMan</strong> to be dynamic rather than purely static, giving you more flexibility.</p>
+<h2 id="why-its-a-weakness"><a class="header" href="#why-its-a-weakness">Why it's a weakness</a></h2>
+<p>It’s a weakness because it allows arbitrary Rhai code. <strong>XmlMan</strong> cannot validate these expressions at parse time, so they may cause errors during runtime.</p>
+<h2 id="how-to-use-expressions"><a class="header" href="#how-to-use-expressions">How to use expressions</a></h2>
+<p>Expressions are written inside <code>${}</code>.</p>
+<p>Example:</p>
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;Root&gt;
+    &lt;Window name="Banana"&gt;
+        &lt;Box&gt;
+            &lt;!-- The expression inside ${} is a Rhai expression --&gt;
+            &lt;Label text="${2 + 2}"/&gt;
+        &lt;/Box&gt;
+    &lt;/Window&gt;
+&lt;/Root&gt;
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="introduction.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="expressions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="basic_expressions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="special_expressions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -206,11 +224,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="introduction.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="expressions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="basic_expressions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="special_expressions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
