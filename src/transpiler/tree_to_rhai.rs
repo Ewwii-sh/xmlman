@@ -2,6 +2,14 @@ use super::{Attr, InternalTree};
 use crate::error::DiagInfo;
 use std::collections::BTreeMap;
 
+fn format_value(value: &str) -> String {
+    if let Some(inner) = value.strip_prefix("@no_quote(").and_then(|s| s.strip_suffix(")")) {
+        inner.to_string()
+    } else {
+        format!("`{}`", value)
+    }
+}
+
 /// Format attributes into a Rhai-compatible map with pretty indentation
 fn format_attrs(attrs: &Vec<Attr>, indent: usize) -> String {
     if attrs.is_empty() {
@@ -9,10 +17,8 @@ fn format_attrs(attrs: &Vec<Attr>, indent: usize) -> String {
     }
 
     let indent_str = "  ".repeat(indent);
-    let entries: Vec<String> = attrs
-        .iter()
-        .map(|a| format!("\"{}\": `{}`", a.key, a.value))
-        .collect();
+    let entries: Vec<String> =
+        attrs.iter().map(|a| format!("\"{}\": {}", a.key, format_value(&a.value))).collect();
 
     if entries.len() == 1 {
         format!("#{{ {} }}", entries[0])
@@ -54,13 +60,13 @@ fn defwidget_attrs_parser(attrs: &Vec<Attr>) -> String {
             }
         }
 
-        flat_entries.push(format!("\"{}\": `{}`", a.key, a.value));
+        flat_entries.push(format!("\"{}\": {}", a.key, format_value(&a.value)));
     }
 
     if !geometry_map.is_empty() {
         let geom_entries: Vec<String> = geometry_map
             .into_iter()
-            .map(|(k, v)| format!("\"{}\": `{}`", k, v))
+            .map(|(k, v)| format!("\"{}\": {}", k, format_value(&v)))
             .collect();
         flat_entries.push(format!("\"geometry\": #{{ {} }}", geom_entries.join(", ")));
     }
@@ -68,7 +74,7 @@ fn defwidget_attrs_parser(attrs: &Vec<Attr>) -> String {
     if !reserve_map.is_empty() {
         let reserve_entries: Vec<String> = reserve_map
             .into_iter()
-            .map(|(k, v)| format!("\"{}\": `{}`", k, v))
+            .map(|(k, v)| format!("\"{}\": {}", k, format_value(&v)))
             .collect();
         flat_entries.push(format!("\"reserve\": #{{ {} }}", reserve_entries.join(", ")));
     }
@@ -106,11 +112,7 @@ fn transpile(
                 calls.push(format!("{}{}", "  ".repeat(indent + 1), child_call));
             }
 
-            let formatted = format!(
-                "enter([\n{}\n{}])",
-                calls.join(",\n"),
-                indent_str
-            );
+            let formatted = format!("enter([\n{}\n{}])", calls.join(",\n"), indent_str);
 
             Ok((fns, formatted))
         }
@@ -118,10 +120,8 @@ fn transpile(
         InternalTree::DefWindow { name, attrs, node, .. } => {
             let (mut child_fns, child_call) = transpile(node, false, indent + 1)?;
             let fn_name = format!("{}_child", name);
-            let fn_def = format!(
-                "fn {}() {{\n{}  {}\n{}}}",
-                fn_name, indent_str, child_call, indent_str
-            );
+            let fn_def =
+                format!("fn {}() {{\n{}  {}\n{}}}", fn_name, indent_str, child_call, indent_str);
             child_fns.push(fn_def);
 
             let call = format!(
@@ -178,20 +178,48 @@ fn transpile(
         }
 
         // Leaf widgets
-        InternalTree::Button { attrs, .. } => Ok((vec![], format!("button({})", format_attrs(attrs, indent)))),
-        InternalTree::Label { attrs, .. } => Ok((vec![], format!("label({})", format_attrs(attrs, indent)))),
-        InternalTree::Image { attrs, .. } => Ok((vec![], format!("image({})", format_attrs(attrs, indent)))),
-        InternalTree::Input { attrs, .. } => Ok((vec![], format!("input({})", format_attrs(attrs, indent)))),
-        InternalTree::Progress { attrs, .. } => Ok((vec![], format!("progress({})", format_attrs(attrs, indent)))),
-        InternalTree::ComboBoxText { attrs, .. } => Ok((vec![], format!("comboboxtext({})", format_attrs(attrs, indent)))),
-        InternalTree::Slider { attrs, .. } => Ok((vec![], format!("slider({})", format_attrs(attrs, indent)))),
-        InternalTree::Checkbox { attrs, .. } => Ok((vec![], format!("checkbox({})", format_attrs(attrs, indent)))),
-        InternalTree::Calendar { attrs, .. } => Ok((vec![], format!("calendar({})", format_attrs(attrs, indent)))),
-        InternalTree::ColorButton { attrs, .. } => Ok((vec![], format!("colorbutton({})", format_attrs(attrs, indent)))),
-        InternalTree::ColorChooser { attrs, .. } => Ok((vec![], format!("colorchooser({})", format_attrs(attrs, indent)))),
-        InternalTree::CircularProgress { attrs, .. } => Ok((vec![], format!("circularprogress({})", format_attrs(attrs, indent)))),
-        InternalTree::Graph { attrs, .. } => Ok((vec![], format!("graph({})", format_attrs(attrs, indent)))),
-        InternalTree::Transform { attrs, .. } => Ok((vec![], format!("transform({})", format_attrs(attrs, indent)))),
+        InternalTree::Button { attrs, .. } => {
+            Ok((vec![], format!("button({})", format_attrs(attrs, indent))))
+        }
+        InternalTree::Label { attrs, .. } => {
+            Ok((vec![], format!("label({})", format_attrs(attrs, indent))))
+        }
+        InternalTree::Image { attrs, .. } => {
+            Ok((vec![], format!("image({})", format_attrs(attrs, indent))))
+        }
+        InternalTree::Input { attrs, .. } => {
+            Ok((vec![], format!("input({})", format_attrs(attrs, indent))))
+        }
+        InternalTree::Progress { attrs, .. } => {
+            Ok((vec![], format!("progress({})", format_attrs(attrs, indent))))
+        }
+        InternalTree::ComboBoxText { attrs, .. } => {
+            Ok((vec![], format!("comboboxtext({})", format_attrs(attrs, indent))))
+        }
+        InternalTree::Slider { attrs, .. } => {
+            Ok((vec![], format!("slider({})", format_attrs(attrs, indent))))
+        }
+        InternalTree::Checkbox { attrs, .. } => {
+            Ok((vec![], format!("checkbox({})", format_attrs(attrs, indent))))
+        }
+        InternalTree::Calendar { attrs, .. } => {
+            Ok((vec![], format!("calendar({})", format_attrs(attrs, indent))))
+        }
+        InternalTree::ColorButton { attrs, .. } => {
+            Ok((vec![], format!("colorbutton({})", format_attrs(attrs, indent))))
+        }
+        InternalTree::ColorChooser { attrs, .. } => {
+            Ok((vec![], format!("colorchooser({})", format_attrs(attrs, indent))))
+        }
+        InternalTree::CircularProgress { attrs, .. } => {
+            Ok((vec![], format!("circularprogress({})", format_attrs(attrs, indent))))
+        }
+        InternalTree::Graph { attrs, .. } => {
+            Ok((vec![], format!("graph({})", format_attrs(attrs, indent))))
+        }
+        InternalTree::Transform { attrs, .. } => {
+            Ok((vec![], format!("transform({})", format_attrs(attrs, indent))))
+        }
     }
 }
 

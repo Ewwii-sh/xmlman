@@ -19,11 +19,11 @@
 ### Transpiled Rhai Output
 
 ```rs
+fn Banana_child() {
+    button(#{ "label": `Click me` })
+}
+
 enter([
-    defwindow("Banana", #{}, button(#{ label: "Click me" }))
-]);
+    defwindow("Banana", #{  }, Banana_child())
+])
 ```
-
-## TODO
-
-- [ ] Add a way to support booleans.
