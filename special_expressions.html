@@ -188,7 +188,7 @@
                         <h1 id="special-expression-no_quote"><a class="header" href="#special-expression-no_quote">Special Expression: <code>@no_quote</code></a></h1>
 <p><code>XmlMan</code> provides a special expression called <code>@no_quote</code> that allows you to assign <strong>non-string values</strong> (like booleans, integers, or other raw data) to element attributes. Normally, attribute values are wrapped in quotes and interpreted as strings. Using <code>@no_quote</code> tells the transpiler <strong>not</strong> to quote the value.</p>
 <h3 id="how-it-works"><a class="header" href="#how-it-works">How It Works</a></h3>
-<p>In <code>XmlMan</code>, XML attributes are normally <strong>always quoted</strong>, which means values are treated as strings. Sometimes, you want to assign <strong>raw values</strong>—like booleans or numbers—without quotes. The <code>@no_quote</code> expression makes this possible.</p>
+<p>In <code>XmlMan</code>, XML attributes are normally <strong>always quoted</strong>, which means values are treated as strings. Sometimes, you want to assign <strong>raw values</strong> like booleans or numbers (without quotes). The <code>@no_quote</code> expression makes this possible.</p>
 <h4 id="xml-example"><a class="header" href="#xml-example">XML Example</a></h4>
 <pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 
@@ -218,7 +218,12 @@ enter([
 ])
 </code></pre>
 <blockquote>
-<p><strong>Important:</strong> If you write <code>@no_quote(val) some_other_val</code>, the engine will <strong>still</strong> wrap the entire value in quotes. Only the direct use of <code>@no_quote(val)</code> ensures the value remains unquoted.</p>
+<p><strong>Important</strong></p>
+<p>If you write <code>@no_quote(val) some_other_val</code>, the engine will <strong>still</strong> wrap the entire value in quotes. Only the direct use of <code>@no_quote(val)</code> ensures the value remains unquoted.</p>
+</blockquote>
+<blockquote>
+<p><strong>Caution</strong></p>
+<p>When using <code>@no_quote</code>, <code>XmlMan</code> cannot guarantee that the resulting code is valid. Make sure the values you pass are appropriate for the context.</p>
 </blockquote>
 
                     </main>
