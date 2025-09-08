@@ -23,3 +23,7 @@ enter([
     defwindow("Banana", #{}, button(#{ label: "Click me" }))
 ]);
 ```
+
+## TODO
+
+- [ ] Add a way to support booleans.
