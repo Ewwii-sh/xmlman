@@ -192,8 +192,8 @@
 <p>Making a configuration with <code>XmlMan</code> is really easy and straightforward due to the declarative style of xml.</p>
 <p>Just define what the UI looks like, and you will be done!</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>The only requirement before using <code>XmlMan</code> is a basic idea of xml. Most of the documentation here expects that you know a bit of xml.</p>
-<p>If you don't know anything about xml, then I suggest learning about it online.</p>
+<p>Before using <code>XmlMan</code>, you should have a <strong>basic understanding of XML</strong>, its structure, tags, and attributes. This documentation assumes you're already familiar with these concepts and focuses on how <code>XmlMan</code> extends or interacts with them.</p>
+<p>If you're completely new to XML, it's worth exploring some tutorials or online resources to get a foundational grasp. Understanding XML will help you navigate <code>XmlMan</code> more effectively and avoid confusion.</p>
 <h2 id="basic-setup"><a class="header" href="#basic-setup">Basic Setup</a></h2>
 <pre><code class="language-xml">&lt;!-- The &lt;Root&gt; element is important! --&gt;
 &lt;Root&gt;
@@ -233,31 +233,125 @@
     &lt;/Window&gt;
 &lt;/Root&gt;
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="widgets"><a class="header" href="#widgets">Widgets</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="widget-api"><a class="header" href="#widget-api">Widget API</a></h1>
+<h3 id="top-level"><a class="header" href="#top-level">Top Level</a></h3>
 <ul>
-<li><strong>box</strong>: <code>&lt;Box&gt;&lt;/Box&gt;</code></li>
-<li><strong>centerbox</strong>: <code>&lt;CenterBox&gt;&lt;/CenterBox&gt;</code></li>
-<li><strong>eventbox</strong>: <code>&lt;EventBox&gt;&lt;/EventBox&gt;</code></li>
-<li><strong>tooltip</strong>: <code>&lt;ToolTip&gt;&lt;/ToolTip&gt;</code></li>
-<li><strong>circular_progress</strong>: <code>&lt;CircularProgress&gt;&lt;/CircularProgress&gt;</code></li>
-<li><strong>graph</strong>: <code>&lt;Graph&gt;&lt;/Graph&gt;</code></li>
-<li><strong>transform</strong>: <code>&lt;Transform&gt;&lt;/Transform&gt;</code></li>
-<li><strong>slider</strong>: <code>&lt;Slider&gt;&lt;/Slider&gt;</code></li>
-<li><strong>progress</strong>: <code>&lt;Progress&gt;&lt;/Progress&gt;</code></li>
-<li><strong>image</strong>: <code>&lt;Image&gt;&lt;/Image&gt;</code></li>
-<li><strong>button</strong>: <code>&lt;Button&gt;&lt;/Button&gt;</code></li>
-<li><strong>label</strong>: <code>&lt;Label&gt;&lt;/Label&gt;</code></li>
-<li><strong>input</strong>: <code>&lt;Input&gt;&lt;/Input&gt;</code></li>
-<li><strong>calendar</strong>: <code>&lt;Calendar&gt;&lt;/Calendar&gt;</code></li>
-<li><strong>color_button</strong>: <code>&lt;ColorButton&gt;&lt;/ColorButton&gt;</code></li>
-<li><strong>expander</strong>: <code>&lt;Expander&gt;&lt;/Expander&gt;</code></li>
-<li><strong>color_chooser</strong>: <code>&lt;ColorChooser&gt;&lt;/ColorChooser&gt;</code></li>
-<li><strong>combo_box_text</strong>: <code>&lt;ComboBoxText&gt;&lt;/ComboBoxText&gt;</code></li>
-<li><strong>checkbox</strong>: <code>&lt;CheckBox&gt;&lt;/CheckBox&gt;</code></li>
-<li><strong>revealer</strong>: <code>&lt;Revealer&gt;&lt;/Revealer&gt;</code></li>
-<li><strong>scroll</strong>: <code>&lt;Scroll&gt;&lt;/Scroll&gt;</code></li>
-<li><strong>overlay</strong>: <code>&lt;Overlay&gt;&lt;/Overlay&gt;</code></li>
-<li><strong>stack</strong>: <code>&lt;Stack&gt;&lt;/Stack&gt;</code></li>
+<li>
+<p><strong>defwindow</strong>
+<code>&lt;Window&gt;&lt;/Window&gt;</code></p>
+</li>
+<li>
+<p><strong>poll</strong>
+<code>&lt;Poll&gt;&lt;/Poll&gt;</code></p>
+</li>
+<li>
+<p><strong>listen</strong>
+<code>&lt;Listen&gt;&lt;/Listen&gt;</code></p>
+</li>
+</ul>
+<h3 id="containers"><a class="header" href="#containers">Containers</a></h3>
+<ul>
+<li>
+<p><strong>box</strong>
+<code>&lt;Box&gt;&lt;/Box&gt;</code></p>
+</li>
+<li>
+<p><strong>centerbox</strong>
+<code>&lt;CenterBox&gt;&lt;/CenterBox&gt;</code></p>
+</li>
+<li>
+<p><strong>eventbox</strong>
+<code>&lt;EventBox&gt;&lt;/EventBox&gt;</code></p>
+</li>
+<li>
+<p><strong>overlay</strong>
+<code>&lt;Overlay&gt;&lt;/Overlay&gt;</code></p>
+</li>
+<li>
+<p><strong>stack</strong>
+<code>&lt;Stack&gt;&lt;/Stack&gt;</code></p>
+</li>
+</ul>
+<h3 id="controls"><a class="header" href="#controls">Controls</a></h3>
+<ul>
+<li>
+<p><strong>button</strong>
+<code>&lt;Button&gt;&lt;/Button&gt;</code></p>
+</li>
+<li>
+<p><strong>slider</strong>
+<code>&lt;Slider&gt;&lt;/Slider&gt;</code></p>
+</li>
+<li>
+<p><strong>input</strong>
+<code>&lt;Input&gt;&lt;/Input&gt;</code></p>
+</li>
+<li>
+<p><strong>checkbox</strong>
+<code>&lt;CheckBox&gt;&lt;/CheckBox&gt;</code></p>
+</li>
+<li>
+<p><strong>color_button</strong>
+<code>&lt;ColorButton&gt;&lt;/ColorButton&gt;</code></p>
+</li>
+<li>
+<p><strong>color_chooser</strong>
+<code>&lt;ColorChooser&gt;&lt;/ColorChooser&gt;</code></p>
+</li>
+<li>
+<p><strong>combo_box_text</strong>
+<code>&lt;ComboBoxText&gt;&lt;/ComboBoxText&gt;</code></p>
+</li>
+</ul>
+<h3 id="feedback--display"><a class="header" href="#feedback--display">Feedback &amp; Display</a></h3>
+<ul>
+<li>
+<p><strong>tooltip</strong>
+<code>&lt;ToolTip&gt;&lt;/ToolTip&gt;</code></p>
+</li>
+<li>
+<p><strong>progress</strong>
+<code>&lt;Progress&gt;&lt;/Progress&gt;</code></p>
+</li>
+<li>
+<p><strong>circular_progress</strong>
+<code>&lt;CircularProgress&gt;&lt;/CircularProgress&gt;</code></p>
+</li>
+<li>
+<p><strong>graph</strong>
+<code>&lt;Graph&gt;&lt;/Graph&gt;</code></p>
+</li>
+<li>
+<p><strong>image</strong>
+<code>&lt;Image&gt;&lt;/Image&gt;</code></p>
+</li>
+<li>
+<p><strong>label</strong>
+<code>&lt;Label&gt;&lt;/Label&gt;</code></p>
+</li>
+<li>
+<p><strong>calendar</strong>
+<code>&lt;Calendar&gt;&lt;/Calendar&gt;</code></p>
+</li>
+</ul>
+<h3 id="layout--behavior"><a class="header" href="#layout--behavior">Layout &amp; Behavior</a></h3>
+<ul>
+<li>
+<p><strong>transform</strong>
+<code>&lt;Transform&gt;&lt;/Transform&gt;</code></p>
+</li>
+<li>
+<p><strong>revealer</strong>
+<code>&lt;Revealer&gt;&lt;/Revealer&gt;</code></p>
+</li>
+<li>
+<p><strong>scroll</strong>
+<code>&lt;Scroll&gt;&lt;/Scroll&gt;</code></p>
+</li>
+<li>
+<p><strong>expander</strong>
+<code>&lt;Expander&gt;&lt;/Expander&gt;</code></p>
+</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="expressions"><a class="header" href="#expressions">Expressions</a></h1>
 <p>Expressions are one of the most important concepts in xmlman which makes it more flexible.</p>
