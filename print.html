@@ -188,6 +188,23 @@
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
 <p><strong>XmlMan</strong> is an elegant XML-to-Rhai transpiler for Ewwii, designed to make UI definitions and data structures concise, expressive, and scriptable. It combines the readability of XML with the flexibility of Rhai scripting, giving you precise error reporting without the struggle of Ewwii's Rahi API's.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="configuring"><a class="header" href="#configuring">Configuring</a></h1>
+<p>Making a configuration with <code>XmlMan</code> is really easy and straightforward due to the declarative style of xml.</p>
+<p>Just define what the UI looks like, and you will be done!</p>
+<h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
+<p>The only requirement before using <code>XmlMan</code> is a basic idea of xml. Most of the documentation here expects that you know a bit of xml.</p>
+<p>If you don't know anything about xml, then I suggest learning about it online.</p>
+<h2 id="basic-setup"><a class="header" href="#basic-setup">Basic Setup</a></h2>
+<pre><code class="language-xml">&lt;!-- The &lt;Root&gt; element is important! --&gt;
+&lt;Root&gt;
+    &lt;Window name="Foo"&gt;
+        &lt;Label text="boo"/&gt;
+    &lt;/Window&gt;
+&lt;/Root&gt;
+</code></pre>
+<p>Let's analyze the above config.</p>
+<p>At the top of this example, we can see a <code>&lt;Root&gt;</code> element (see <a href="config/./rules#rule-1---use-a-root-element">rules#rule-1</a>) in which is a wrapper that <strong>contains your configuration</strong>. It is a mandotary requirement as xml can't handle multiple widgets at the top level.</p>
+<p>And inside the root, we can see a <code>&lt;Window&gt;</code> element. This element is basically an application window to which you can add widgets to. And the <code>&lt;Label&gt;</code> element inside the window is a label widget which shows up inside our window when its opened.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="configuration-rules"><a class="header" href="#configuration-rules">Configuration Rules</a></h1>
 <p>These rules ensure that the structure and logic of your configuration remain flexible, safe, and prone to less runtime errors.</p>
 <p>Currently there are only 2 rules, but as <code>XmlMan</code> matures, many more rules may appear.</p>
