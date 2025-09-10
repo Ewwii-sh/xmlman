@@ -1,0 +1,25 @@
+# Widgets
+
+- **box**: `<Box></Box>`
+- **centerbox**: `<CenterBox></CenterBox>`
+- **eventbox**: `<EventBox></EventBox>`
+- **tooltip**: `<ToolTip></ToolTip>`
+- **circular_progress**: `<CircularProgress></CircularProgress>`
+- **graph**: `<Graph></Graph>`
+- **transform**: `<Transform></Transform>`
+- **slider**: `<Slider></Slider>`
+- **progress**: `<Progress></Progress>`
+- **image**: `<Image></Image>`
+- **button**: `<Button></Button>`
+- **label**: `<Label></Label>`
+- **input**: `<Input></Input>`
+- **calendar**: `<Calendar></Calendar>`
+- **color_button**: `<ColorButton></ColorButton>`
+- **expander**: `<Expander></Expander>`
+- **color_chooser**: `<ColorChooser></ColorChooser>`
+- **combo_box_text**: `<ComboBoxText></ComboBoxText>`
+- **checkbox**: `<CheckBox></CheckBox>`
+- **revealer**: `<Revealer></Revealer>`
+- **scroll**: `<Scroll></Scroll>`
+- **overlay**: `<Overlay></Overlay>`
+- **stack**: `<Stack></Stack>`
