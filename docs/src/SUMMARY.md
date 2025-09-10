@@ -2,6 +2,7 @@
 
 - [Introduction](./introduction.md)
 - [Configuration]()
+  - [Configuring](./config/configuring.md)
   - [Configuration Rules](./config/rules.md)
   - [Widgets](./config/widgets.md)
 - [Expressions](./expressions.md)
