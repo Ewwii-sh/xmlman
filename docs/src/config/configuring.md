@@ -6,9 +6,9 @@ Just define what the UI looks like, and you will be done!
 
 ## Prerequisites
 
-The only requirement before using `XmlMan` is a basic idea of xml. Most of the documentation here expects that you know a bit of xml.
+Before using `XmlMan`, you should have a **basic understanding of XML**, its structure, tags, and attributes. This documentation assumes you're already familiar with these concepts and focuses on how `XmlMan` extends or interacts with them.
 
-If you don't know anything about xml, then I suggest learning about it online.
+If you're completely new to XML, it's worth exploring some tutorials or online resources to get a foundational grasp. Understanding XML will help you navigate `XmlMan` more effectively and avoid confusion.
 
 ## Basic Setup
 

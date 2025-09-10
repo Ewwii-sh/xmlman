@@ -4,7 +4,7 @@
 - [Configuration]()
   - [Configuring](./config/configuring.md)
   - [Configuration Rules](./config/rules.md)
-  - [Widgets](./config/widgets.md)
+  - [Widget API](./config/widget_api.md)
 - [Expressions](./expressions.md)
   - [Basic Expressions](./basic_expressions.md)
   - [Special Expression](./special_expressions.md)
