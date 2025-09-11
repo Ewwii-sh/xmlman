@@ -1,5 +1,7 @@
 # Widget API
 
+This section covers all the ewwii widgets and how you can create one within `XmlMan`.
+
 ### Top Level
 
 - **defwindow**

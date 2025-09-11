@@ -1,7 +1,7 @@
 # Summary
 
 - [Introduction](./introduction.md)
-- [Configuration]()
+- [Configuration](./config/overview.md)
   - [Configuring](./config/configuring.md)
   - [Configuration Rules](./config/rules.md)
   - [Widget API](./config/widget_api.md)
