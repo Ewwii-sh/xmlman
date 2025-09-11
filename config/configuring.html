@@ -202,12 +202,37 @@
 <p>Let's analyze the above config.</p>
 <p>At the top of this example, we can see a <code>&lt;Root&gt;</code> element (see <a href="./rules#rule-1---use-a-root-element">rules#rule-1</a>) in which is a wrapper that <strong>contains your configuration</strong>. It is a mandotary requirement as xml can't handle multiple widgets at the top level.</p>
 <p>And inside the root, we can see a <code>&lt;Window&gt;</code> element. This element is basically an application window to which you can add widgets to. And the <code>&lt;Label&gt;</code> element inside the window is a label widget which shows up inside our window when its opened.</p>
+<h2 id="properties"><a class="header" href="#properties">Properties</a></h2>
+<p>Even if you have the layout of your window ready, it wont really do anything unless we use properties.</p>
+<p>To understand properties, lets go back to the previous example again.</p>
+<p>From the previous example, lets focus on the <code>&lt;Label text="boo"/&gt;</code> element. See the text attribute? Yeah, that is the property of the widget.</p>
+<p><code>XmlMan</code> does not bother validating the attributes on its own as it would be very complex. Instead, it just directly transpiles that attribute to the appropriate rhai attribute.</p>
+<p>For example, <code>&lt;Label text="boo"/&gt;</code> would get converted to <code>label(#{ text: "boo" })</code>.</p>
+<p>To use properties efficiently, checkout the <a href="https://ewwii-sh.github.io/ewwii/widgets/props.html">widget properties section in ewwii docs</a>.</p>
+<h2 id="special-properties"><a class="header" href="#special-properties">Special properties</a></h2>
+<p>Now that you have learnt of properties, lets now learn of the special properties that is only valid in <code>XmlMan</code>.</p>
+<p>These properties exist, because we can do something like this in rhai:</p>
+<pre><code class="language-js  ignore">enter([
+  defwindow("example", #{
+    // the following thing
+    geometry: #{
+        x: "0%",
+        y: "2px",
+        width: "90%",
+        height: "30px",
+        anchor: "top center"
+    },
+  }, label(#{ text: "example content" }))
+])
+</code></pre>
+<p>Here we can see that the geometry property has nested properties within itself which is not possible to implement in xml.</p>
+<p>So, to fix this issue, <code>XmlMan</code> intercepts special properties assigned to a <code>&lt;Window&gt;</code> and translates it to the rhai equivalent.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../introduction.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../config/overview.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
@@ -221,7 +246,7 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../introduction.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../config/overview.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
