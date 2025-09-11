@@ -65,3 +65,21 @@ enter([
 Here we can see that the geometry property has nested properties within itself which is not possible to implement in xml.
 
 So, to fix this issue, `XmlMan` intercepts special properties assigned to a `<Window>` and translates it to the rhai equivalent.
+
+**All geometry based properties:**
+
+| Special Property  | Description                               |
+| ----------------- | ----------------------------------------- |
+| `geometry.x`      | The x position of the window              |
+| `geometry.y`      | The y position of the window              |
+| `geometry.width`  | The width of the window (in `px` or `%`)  |
+| `geometry.height` | The height of the window (in `px` or `%`) |
+
+**All reserve based properties:**
+
+| Special Property   | Description                                  |
+| ------------------ | -------------------------------------------- |
+| `reserve.side`     | Where a window manager should reserve space  |
+| `reserve.distance` | How much space window manager should reserve |
+
+> **NOTE:** The reserve property is only for `x11` and will not work on `wayland`.
