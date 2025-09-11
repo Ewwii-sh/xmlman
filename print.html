@@ -233,6 +233,23 @@
 </code></pre>
 <p>Here we can see that the geometry property has nested properties within itself which is not possible to implement in xml.</p>
 <p>So, to fix this issue, <code>XmlMan</code> intercepts special properties assigned to a <code>&lt;Window&gt;</code> and translates it to the rhai equivalent.</p>
+<p><strong>All geometry based properties:</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Special Property</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>geometry.x</code></td><td>The x position of the window</td></tr>
+<tr><td><code>geometry.y</code></td><td>The y position of the window</td></tr>
+<tr><td><code>geometry.width</code></td><td>The width of the window (in <code>px</code> or <code>%</code>)</td></tr>
+<tr><td><code>geometry.height</code></td><td>The height of the window (in <code>px</code> or <code>%</code>)</td></tr>
+</tbody></table>
+</div>
+<p><strong>All reserve based properties:</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Special Property</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>reserve.side</code></td><td>Where a window manager should reserve space</td></tr>
+<tr><td><code>reserve.distance</code></td><td>How much space window manager should reserve</td></tr>
+</tbody></table>
+</div>
+<blockquote>
+<p><strong>NOTE:</strong> The reserve property is only for <code>x11</code> and will not work on <code>wayland</code>.</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="configuration-rules"><a class="header" href="#configuration-rules">Configuration Rules</a></h1>
 <p>These rules ensure that the structure and logic of your configuration remain flexible, safe, and prone to less runtime errors.</p>
 <p>Currently there are only 2 rules, but as <code>XmlMan</code> matures, many more rules may appear.</p>
