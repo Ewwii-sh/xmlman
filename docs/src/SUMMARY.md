@@ -1,6 +1,7 @@
 # Summary
 
 - [Introduction](./introduction.md)
+- [Installation](./install.md)
 - [Configuration](./config/overview.md)
   - [Configuring](./config/configuring.md)
   - [Configuration Rules](./config/rules.md)
